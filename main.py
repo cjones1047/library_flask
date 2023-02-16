@@ -20,16 +20,18 @@ class BookForm(FlaskForm):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', all_books=all_books)
 
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
     form = BookForm()
     if form.validate_on_submit():
-        print(form.title.data)
-        print(form.author.data)
-        print(form.rating.data)
+        new_book_dict = dict(title=form.title.data,
+                             author=form.author.data,
+                             rating=form.rating.data)
+        all_books.append(new_book_dict)
+        return redirect(url_for('home'))
 
     return render_template('add.html', form=form)
 

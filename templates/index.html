@@ -6,9 +6,15 @@
 </head>
 <body>
 <h1>My Library</h1>
-    <ul>
-        <li></li>
-    </ul>
+    {% if all_books != [] %}
+        <ul>
+            {% for book in all_books: %}
+                <li>{{ book.title }} - {{ book.author }} - {{ book.rating }}/5</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Book list empty.</p>
+    {% endif %}
     
 <a href="{{ url_for('add') }}">Add New Book</a>
 </body>
