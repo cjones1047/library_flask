@@ -1,12 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField
+from wtforms import Form, StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, NumberRange
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = 'kldjfe98ujsfdlf098ejfds0f9dsjfj'
 Bootstrap(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///new_books_collection.db"
+db = SQLAlchemy(app)
 
 all_books = []
 
@@ -16,6 +19,16 @@ class BookForm(FlaskForm):
     author = StringField('Book Author', validators=[DataRequired()])
     rating = IntegerField('Rating', validators=[DataRequired(), NumberRange(min=1, max=5)])
     submit = SubmitField('Add Book')
+
+
+class Book(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(250), unique=True, nullable=False)
+    author = db.Column(db.String(250), nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return '<Book %r>' % self.title
 
 
 @app.route('/')
