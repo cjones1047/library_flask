@@ -65,5 +65,13 @@ def edit_rating(book_id):
     return render_template('edit_rating.html', form=form, book=book_to_update)
 
 
+@app.route("/delete_book/<book_id>")
+def delete_book(book_id):
+    book_to_delete = db.session.get(Book, book_id)
+    db.session.delete(book_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
+
+
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
