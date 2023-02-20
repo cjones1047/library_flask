@@ -19,6 +19,11 @@ class BookForm(FlaskForm):
     submit = SubmitField('Add Book')
 
 
+class EditRatingForm(FlaskForm):
+    rating = FloatField(validators=[DataRequired(), NumberRange(min=1, max=5)])
+    submit = SubmitField('Change Rating')
+
+
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
@@ -48,6 +53,17 @@ def add():
     return render_template('add.html', form=form)
 
 
+@app.route("/edit_rating/<book_id>", methods=["GET", "POST"])
+def edit_rating(book_id):
+    form = EditRatingForm()
+    book_to_update = db.session.get(Book, book_id)
+    if form.validate_on_submit():
+        book_to_update.rating = form.rating.data
+        db.session.commit()
+        return redirect(url_for('home'))
+
+    return render_template('edit_rating.html', form=form, book=book_to_update)
+
+
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
-
